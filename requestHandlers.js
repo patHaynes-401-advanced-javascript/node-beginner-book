@@ -1,17 +1,17 @@
-// const querystring = require('querystring'),
-const fs = require('fs'),
-  formidable = require('formidable');
+const querystring = require('querystring');
+const fs = require('fs');
+const formidable = require('formidable');
 
 function start(response) {
   console.log('request handler start was called.');
 
-  const body = '<html>' +
+  const body = `<html>` +
     '<head>' +
-    '<meta http-equiv="Content-Type" ' +
-    'content="text/html; charset=UTF-8" />' +
+    '<meta http-equiv="Content-Type" content="text/html;' +
+    'charset=UTF-8" />' +
     '</head>' +
     '<body>' +
-    '<form action="/upload" method="post">' +
+    '<form action="/upload" enctype="multipart/form-data" method="post">' +
     '<input type="file" name="upload" multiple="multiple">' +
     '<input type="submit" value="Upload file" />' +
     '</form>' +
@@ -31,10 +31,10 @@ function upload(response, request) {
   form.parse(request, function(error, fields, files) {
     console.log('parsing done');
 
-    fs.rename(files.upload.path, '/tmp/test.png', function(error) {
+    fs.rename(files.upload.path, './tmp/test.png', function(error) {
       if(error) {
-        fs.unlink('/tmp/test.png');
-        fs.rename(files.upload.path, '/tmp/test.png');
+        fs.unlink('./tmp/test.png');
+        fs.rename(files.upload.path, './tmp/test.png');
       }
     });
     response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -47,7 +47,7 @@ function upload(response, request) {
 function show(response) {
   console.log('request handler show was called.');
   response.writeHead(200, { 'Content-type': 'image/png' });
-  fs.createReadStream('/tmp/test.png').pipe(response);
+  fs.createReadStream('./tmp/test.png').pipe(response);
 }
 
 exports.start = start;
